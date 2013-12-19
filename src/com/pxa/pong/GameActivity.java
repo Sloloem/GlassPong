@@ -10,6 +10,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.Menu;
 import android.view.SurfaceHolder;
@@ -58,6 +59,8 @@ public class GameActivity extends Activity {
 			super(context);
 			this.surfaceHolder = getHolder();
 			whitePaint.setColor(Color.WHITE);
+			whitePaint.setStyle(Paint.Style.STROKE);
+			whitePaint.setStrokeWidth(200);
 		}
 		
 		public void onResumeMySurfaceView(){
@@ -87,7 +90,13 @@ public class GameActivity extends Activity {
 					Canvas canvas = surfaceHolder.lockCanvas();
 					//... actual drawing on canvas
 					
-					canvas.drawRect(canvas.getHeight()-10, canvas.getWidth()-10, canvas.getHeight()-10, canvas.getWidth()-10, this.whitePaint);
+					int w = canvas.getWidth();
+					int h = canvas.getHeight();
+					
+					int cw = w/2;
+					int ch = h/2;
+					
+					canvas.drawRect(cw-10, ch-10, cw+10, ch+10, this.whitePaint);
 					
 					surfaceHolder.unlockCanvasAndPost(canvas);
 				}
