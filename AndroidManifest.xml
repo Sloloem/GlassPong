@@ -23,6 +23,10 @@
                 android:name="com.google.android.glass.VoiceTrigger"
                 android:resource="@xml/play_a_game" />
         </activity>
+        <activity
+            android:name="com.pxa.pong.GameActivity"
+            android:label="@string/title_activity_game" >
+        </activity>
     </application>
 
 </manifest>

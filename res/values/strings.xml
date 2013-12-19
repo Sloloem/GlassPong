@@ -9,5 +9,7 @@
     <string name="title_activity_menu">MenuActivity</string>
     <string name="new_game">Start New Game</string>
     <string name="quit">Quit Pong</string>
+    <string name="title_activity_game">GameActivity</string>
+    <string name="welcome">Welcome to GlassPong</string>
 
 </resources>

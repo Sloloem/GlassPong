@@ -51,6 +51,8 @@ public class MainActivity extends Activity {
         // Handle item selection.
         switch (item.getItemId()) {
         	case R.id.play_new:
+        		Log.v("MainActivity", "New Game GO!");
+        		startActivity(new Intent(this, GameActivity.class));
         		return true;
         	case R.id.stop:
         		this.finish();
