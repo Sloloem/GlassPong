@@ -1,11 +1,5 @@
 package com.pxa.pong;
 
-import java.util.Vector;
-
-import com.google.android.glass.timeline.LiveCard;
-import com.google.android.glass.timeline.LiveCard.PublishMode;
-import com.google.android.glass.timeline.TimelineManager;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -13,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -22,12 +15,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
 public class GameActivity extends Activity {
 	
-	private static final String LiveCardId = "ponggame";
-	private LiveCard _card;
 	private PongSurfaceView _surface;
 
 	@Override
@@ -175,6 +165,14 @@ public class GameActivity extends Activity {
 					}
 					
 					//check for falling off the side
+					if (this.dot.x < 0)
+					{
+						Log.v("DRAW","Dot has fallen off NPC side");
+					}
+					else if (this.dot.x > this.w)
+					{
+						Log.v("DRAW","Dpt has fallend off PC side");
+					}
 					
 					//draw dashed line
 					this.whitePaint.setStrokeWidth(5);
@@ -209,7 +207,7 @@ public class GameActivity extends Activity {
 		@Override
 		public void onSensorChanged(SensorEvent event) {
 			if (this.PC == null)
-				return; //We haven't managed to initialize te screen yet.
+				return; //We haven't managed to initialize the screen yet.
 			if (this.originalZPosition == 0)
 			{ //Fake some auto-calibration by assuming wherever we are at first is level.
 				this.originalZPosition = event.values[2];
