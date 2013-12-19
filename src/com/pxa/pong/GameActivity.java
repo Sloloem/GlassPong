@@ -17,6 +17,7 @@ import android.graphics.RectF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.SurfaceHolder;
@@ -34,6 +35,7 @@ public class GameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		this._surface = new PongSurfaceView(this);
 		this.setContentView(this._surface);
+		this._surface.setKeepScreenOn(true);
 	}
 	@Override
 	protected void onResume() {
@@ -73,8 +75,15 @@ public class GameActivity extends Activity {
 	    volatile boolean running = false;
 	    Paint whitePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	    Position dot;
-	    Position PC;
+	    volatile Position PC;
 	    Position NPC;
+	    int h;
+	    int w;
+
+	    float originalZPosition;
+
+		private final SensorManager _sensorManager;
+	    private final Sensor _vectorRotationSensor;
 		
 		public PongSurfaceView(Context context) {
 			super(context);
@@ -82,10 +91,14 @@ public class GameActivity extends Activity {
 			whitePaint.setColor(Color.WHITE);
 			whitePaint.setStyle(Paint.Style.FILL_AND_STROKE);
 			whitePaint.setStrokeWidth(0);
+			
+			this._sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+			this._vectorRotationSensor = this._sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 		}
 		
 		public void onResumeMySurfaceView(){
 			running = true;
+			this._sensorManager.registerListener(this, this._vectorRotationSensor, SensorManager.SENSOR_DELAY_UI);
 			thread = new Thread(this);
 			thread.start();
 		}
@@ -93,6 +106,7 @@ public class GameActivity extends Activity {
 		public void onPauseMySurfaceView(){
 			boolean retry = true;
 			running = false;
+			this._sensorManager.unregisterListener(this);
 			while(retry){
 				try {
 					thread.join();
@@ -109,9 +123,10 @@ public class GameActivity extends Activity {
 			{
 				if(surfaceHolder.getSurface().isValid()){
 					Canvas canvas = surfaceHolder.lockCanvas();
+					canvas.drawColor(Color.BLACK);
 					
-					int w = canvas.getWidth();
-					int h = canvas.getHeight();
+					this.w = canvas.getWidth();
+					this.h = canvas.getHeight();
 					
 					if (this.dot == null)
 					{
@@ -147,14 +162,22 @@ public class GameActivity extends Activity {
 
 		@Override
 		public void onAccuracyChanged(Sensor arg0, int arg1) {
-			// TODO Auto-generated method stub
-			
+			Log.v("GameActivity", "Accuracy Changed: "+arg1);
 		}
 
 		@Override
 		public void onSensorChanged(SensorEvent event) {
-			// TODO Auto-generated method stub
+			if (this.PC == null)
+				return; //We haven't managed to initialize te screen yet.
+			if (this.originalZPosition == 0)
+			{ //Fake some auto-calibration by assuming wherever we are at first is level.
+				this.originalZPosition = event.values[2];
+			}
+			//Translate change relative to original Z to absolute Y pos of PC paddle.
+			float delta = this.originalZPosition - event.values[2];
 			
+			Log.v("GameActivity", "Rotation Changed, delta Z: "+delta);
+			this.PC.y = (int) ((this.h/2) + (delta*1000));
 		}
 		
 	}
