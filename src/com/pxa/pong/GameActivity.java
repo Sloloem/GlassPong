@@ -75,8 +75,9 @@ public class GameActivity extends Activity {
 	    volatile boolean running = false;
 	    Paint whitePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	    Position dot;
-	    volatile Position PC;
+	    Position PC;
 	    Position NPC;
+	    Position dotVector;
 	    int h;
 	    int w;
 
@@ -94,6 +95,8 @@ public class GameActivity extends Activity {
 			
 			this._sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 			this._vectorRotationSensor = this._sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+			
+			this.dotVector = new Position(5, 1);
 		}
 		
 		public void onResumeMySurfaceView(){
@@ -134,6 +137,44 @@ public class GameActivity extends Activity {
 						this.PC = new Position(w-20, h/2);
 						this.NPC = new Position(20, h/2);
 					}
+					
+					//move dot
+					this.dot.x += this.dotVector.x;
+					this.dot.y += this.dotVector.y;
+					
+					//check for top and bottom bounce
+					if ((this.dot.y >= this.h) || (this.dot.y <= 0))
+					{
+						Log.v("DRAW","TopOrBottom Bounce!");
+						this.dotVector.y *= -1;
+					}
+					
+					//check for paddle collision
+					if ((this.PC.x - this.dot.x) <= 5 && (this.PC.x - this.dot.x) >= 0)
+					{ //Less than 5 and greater than zero should be an appropriate range for a hit
+						Log.v("DRAW", "Near paddle");
+						//Is it near enough on the Y?
+						int yDelta = this.PC.y - this.dot.y;
+						//0 is dead center, between -30 and 30 should be somewhere along the surface.
+						//more extreme angles should result in a change of angle of vector
+						switch ((int)Math.abs(yDelta/10))
+						{
+						case 0:
+							break;
+						case 1:
+							break;
+						case 2:
+							break;
+						}
+						
+						if (Math.abs(yDelta) < 30)
+						{
+							Log.v("DRAW", "Side paddle bounce");
+							this.dotVector.x *= -1;
+						}
+					}
+					
+					//check for falling off the side
 					
 					//draw dashed line
 					this.whitePaint.setStrokeWidth(5);
@@ -176,8 +217,7 @@ public class GameActivity extends Activity {
 			//Translate change relative to original Z to absolute Y pos of PC paddle.
 			float delta = this.originalZPosition - event.values[2];
 			
-			Log.v("GameActivity", "Rotation Changed, delta Z: "+delta);
-			this.PC.y = (int) ((this.h/2) + (delta*1000));
+			this.PC.y = (int) ((this.h/2) - (delta*1500));
 		}
 		
 	}
