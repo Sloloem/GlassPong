@@ -1,19 +1,12 @@
 package com.pxa.pong;
 
-import com.google.android.glass.app.Card;
-import com.google.android.glass.touchpad.Gesture;
-import com.google.android.glass.touchpad.GestureDetector;
-
 import android.os.Bundle;
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 
 public class MainActivity extends Activity {
 

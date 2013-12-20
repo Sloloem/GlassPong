@@ -70,6 +70,8 @@ public class GameActivity extends Activity {
 	    Position dotVector;
 	    int h;
 	    int w;
+	    int PCScore;
+	    int NPCScore;
 
 	    float originalZPosition;
 
@@ -82,6 +84,7 @@ public class GameActivity extends Activity {
 			whitePaint.setColor(Color.WHITE);
 			whitePaint.setStyle(Paint.Style.FILL_AND_STROKE);
 			whitePaint.setStrokeWidth(0);
+			whitePaint.setTextSize(40);
 			
 			this._sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 			this._vectorRotationSensor = this._sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
@@ -168,11 +171,19 @@ public class GameActivity extends Activity {
 					if (this.dot.x < 0)
 					{
 						Log.v("DRAW","Dot has fallen off NPC side");
+						this.PCScore++;
+						this.resetDot();
 					}
 					else if (this.dot.x > this.w)
 					{
-						Log.v("DRAW","Dpt has fallend off PC side");
+						Log.v("DRAW","Dot has fallen off PC side");
+						this.NPCScore++;
+						this.resetDot();
 					}
+					
+					//draw scores
+					canvas.drawText(String.format("%02d", this.PCScore), (this.w/2)-65, 40, this.whitePaint);
+					canvas.drawText(String.format("%02d", this.NPCScore), (this.w/2)+45, 40, this.whitePaint);
 					
 					//draw dashed line
 					this.whitePaint.setStrokeWidth(5);
@@ -197,6 +208,13 @@ public class GameActivity extends Activity {
 					surfaceHolder.unlockCanvasAndPost(canvas);
 				}
 			}
+		}
+		
+		private void resetDot()
+		{
+			this.dot.x = this.w/2;
+			this.dot.y = this.h/2;
+			this.dotVector = new Position(5, 1);
 		}
 
 		@Override
